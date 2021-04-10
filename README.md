@@ -21,12 +21,12 @@
      - 实现接口：添加商品，修改商品，查询，批量操作，订单管理，畅销前三名
      - 基本功能希望都能实现，跨国卖家其他需求实现是加分项
 ### 如何开发
-Working Backwards - 以客户为中心，从客户角度出发进行产品设计
-Start with asking Customer Questions
-Use data to understand and document customer's pain-points
-RD/ Mockup - dynamic
-DevOps
-Agile & Scrum
+ - Working Backwards - 以客户为中心，从客户角度出发进行产品设计
+ - Start with asking Customer Questions
+ - Use data to understand and document customer's pain-points
+ - RD/ Mockup - dynamic
+ - DevOps
+ - Agile & Scrum
   
 ### 下午讨论
    - 前端：semantic ui， 首页（登陆，注册），优惠券领取，促销，个人信息（历史订单，购物车）
