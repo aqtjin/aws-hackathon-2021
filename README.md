@@ -33,8 +33,8 @@ Agile & Scrum
    - 后端：mybatis | hibernate /springboot
    - 中间件：redis/kafka|dynamo db｜rds | amazon translate
 
-4.10 - 调研：ml, big data, aws全家桶
-4.11 - 需求文档
+ - 4.10 - 调研：ml, big data, aws全家桶
+ - 4.11 - 需求文档
 
 创建github - 邀请两个人， 留下开发记录
 pr
