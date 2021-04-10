@@ -31,7 +31,7 @@
 ### 下午讨论
    - 前端：semantic ui， 首页（登陆，注册），优惠券领取，促销，个人信息（历史订单，购物车）
    - 后端：mybatis | hibernate /springboot
-   - 中间件：redis/kafka|dynamo db｜rds | amazon translate
+   - 中间件：rebitmq redis/kafka|dynamo db｜rds | amazon translate
 
  - 4.10 - 调研：ml, big data, aws全家桶
  - 4.11 - 需求文档
