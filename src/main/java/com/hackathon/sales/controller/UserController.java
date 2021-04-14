@@ -14,40 +14,45 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.BindException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 @Controller("user")
 @RequestMapping("/user")
+@CrossOrigin(allowCredentials = "true",originPatterns = "*")
+//@CrossOrigin(allowCredentials = "true", origins = "http://localhost:63342" )
 public class UserController extends BaseController {
 
-
-
-    private final UserService userService;
-
-    private final HttpServletRequest httpServletRequest;
-
     @Autowired
-    public UserController(UserService userService, HttpServletRequest httpServletRequest) {
-        this.userService = userService;
-        this.httpServletRequest = httpServletRequest;
-    }
+    private  UserService userService;
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+//    @Autowired
+//    public UserController(UserService userService, HttpServletRequest httpServletRequest) {
+//        this.userService = userService;
+//        this.httpServletRequest = httpServletRequest;
+//    }
 
     //用户注册接口
     @RequestMapping(value = "/register", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
-    @CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
+
+    //@CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
     public CommonReturnType register(@RequestParam(name="telephone")String telephone,
                                      @RequestParam(name="otpCode")String otpCode,
                                      @RequestParam(name="name")String name,
                                      @RequestParam(name="gender")Integer gender,
-                                     @RequestParam(name="password")String password) throws BusinessException {
+                                     @RequestParam(name="password")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         //验证手机号和对应的otpCode相符合
         String inSessionOtpCode = (String) this.httpServletRequest.getSession().getAttribute(telephone);
         boolean flag = false;
@@ -62,16 +67,25 @@ public class UserController extends BaseController {
         userModel.setGender(new Byte(String.valueOf(gender.intValue())));
         userModel.setTelephone(telephone);
         userModel.setRegisterMode("byphone");
-        userModel.setEncrptPassword(DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8)));
+        userModel.setEncrptPassword(this.EnCodeByMd5(password));
 
         userService.register(userModel);
         return CommonReturnType.create(null);
+    }
+    public String EnCodeByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        // 确定计算方法
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+        // 加密字符串
+        String newStr = base64Encoder.encode(md5.digest(str.getBytes("utf-8")));
+        return newStr;
     }
 
     //用户获取otp短信接口
     @RequestMapping(value="/getotp", method={RequestMethod.POST}, consumes={CONTENT_TYPE_FORMED})
     @ResponseBody
-    @CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
+
+    //@CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
     public CommonReturnType getOtp(@RequestParam(name="telephone") String telephone) {
         //按照一定的规则生成OTP验证码
         Random random = new Random();

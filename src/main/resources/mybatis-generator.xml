@@ -6,9 +6,9 @@
 <generatorConfiguration>
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/miaosha?tinyInt1isBit=false"
+                        connectionURL="jdbc:mysql://jdbc:mysql://miaosha.ctqjuwexc9tq.us-east-1.rds.amazonaws.com:3306/miaosha?tinyInt1isBit=false"
                         userId="root"
-                        password="root">
+                        password="rootroot">
         </jdbcConnection>
 
         <javaModelGenerator targetPackage="com.hackathon.sales.dataobject" targetProject="./src/main/java">
