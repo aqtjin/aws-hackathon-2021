@@ -1,0 +1,10 @@
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    name: miaosha
+    url: jdbc:mysql://localhost:3306/miaosha
+    username: root
+    password: root
