@@ -8,7 +8,10 @@ import com.hackathon.sales.error.BusinessException;
 import com.hackathon.sales.error.EmBusinessError;
 import com.hackathon.sales.service.UserService;
 import com.hackathon.sales.service.model.UserModel;
+import com.hackathon.sales.validator.ValidationResult;
+import com.hackathon.sales.validator.ValidatorImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.builder.BuilderException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -20,11 +23,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserDOMapper userDOMapper;
     private final UserPasswordDOMapper userPasswordDOMapper;
+    private final ValidatorImpl validator;
 
     @Autowired
-    public UserServiceImpl(UserDOMapper userDOMapper, UserPasswordDOMapper userPasswordDOMapper) {
+    public UserServiceImpl(UserDOMapper userDOMapper, UserPasswordDOMapper userPasswordDOMapper, ValidatorImpl validator) {
         this.userDOMapper = userDOMapper;
         this.userPasswordDOMapper = userPasswordDOMapper;
+        this.validator = validator;
     }
 
     @Override
@@ -44,11 +49,16 @@ public class UserServiceImpl implements UserService {
         if (userModel == null) {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
-        if (StringUtils.isEmpty(userModel.getName())
-                || userModel.getGender() == null
-                || StringUtils.isEmpty(userModel.getTelephone())) {
-            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+//        if (StringUtils.isEmpty(userModel.getName())
+//                || userModel.getGender() == null
+//                || StringUtils.isEmpty(userModel.getTelephone())) {
+//            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+//        }
+        ValidationResult result = validator.validate(userModel);
+        if (result.isHasErrors()) {
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, result.getErrMsg());
         }
+
         UserDO userDO = convertFromModel(userModel);
         try {
             userDOMapper.insertSelective(userDO);
@@ -63,11 +73,28 @@ public class UserServiceImpl implements UserService {
         userPasswordDOMapper.insertSelective(userPasswordDO);
     }
 
+    @Override
+    public UserModel validateLogin(String telephone, String encryptPassword) throws BusinessException {
+        //通过用户的手机获取用户的信息
+        UserDO userDO = userDOMapper.selectByTelephone(telephone);
+        if (userDO == null) {
+            throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
+        }
+        UserPasswordDO userPasswordDO = userPasswordDOMapper.selectByUserId(userDO.getId());
+        UserModel userModel = convertFromDataObject(userDO, userPasswordDO);
+
+        //比对用户信息内加密的密码是否和传输进来的密码想匹配
+        if (!StringUtils.equals(encryptPassword, userModel.getEncryptPassword())) {
+            throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
+        }
+        return userModel;
+    }
+
     private UserPasswordDO convertPWFromModel(UserModel userModel) {
         if (userModel == null) return null;
 
         UserPasswordDO userPasswordDO = new UserPasswordDO();
-        userPasswordDO.setEncrptPassword(userModel.getEncrptPassword());
+        userPasswordDO.setEncrptPassword(userModel.getEncryptPassword());
         userPasswordDO.setUserId(userModel.getId());
         return userPasswordDO;
     }
@@ -86,7 +113,7 @@ public class UserServiceImpl implements UserService {
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userDo, userModel);
         if (userPasswordDO != null)
-            userModel.setEncrptPassword(userPasswordDO.getEncrptPassword());
+            userModel.setEncryptPassword(userPasswordDO.getEncrptPassword());
 
         return userModel;
     }

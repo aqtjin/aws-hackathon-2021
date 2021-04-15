@@ -1,21 +1,27 @@
 package com.hackathon.sales.service.model;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class UserModel {
     private Integer id;
+    @NotBlank(message = "用户名不能为空")
     private String name;
+    @NotNull(message = "性别不能不填写")
     private Byte gender;
+    @NotBlank(message = "手机号不能为空")
     private String telephone;
     private String registerMode;
     private String thirdPartyId;
+    @NotBlank(message = "密码不能为空")
+    private String encryptPassword;
 
-    private String encrptPassword;
-
-    public String getEncrptPassword() {
-        return encrptPassword;
+    public String getEncryptPassword() {
+        return encryptPassword;
     }
 
-    public void setEncrptPassword(String encrptPassword) {
-        this.encrptPassword = encrptPassword;
+    public void setEncryptPassword(String encryptPassword) {
+        this.encryptPassword = encryptPassword;
     }
 
     public Integer getId() {
