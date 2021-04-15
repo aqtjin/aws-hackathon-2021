@@ -6,12 +6,14 @@ import com.hackathon.sales.error.EmBusinessError;
 import com.hackathon.sales.response.CommonReturnType;
 import com.hackathon.sales.service.UserService;
 import com.hackathon.sales.service.model.UserModel;
+import com.hackathon.sales.validator.ValidatorImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +27,7 @@ import java.util.Random;
 
 @Controller("user")
 @RequestMapping("/user")
+@CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
 public class UserController extends BaseController {
 
 
@@ -39,10 +42,29 @@ public class UserController extends BaseController {
         this.httpServletRequest = httpServletRequest;
     }
 
+    //用户登录接口
+    @RequestMapping(value = "/login", method = {RequestMethod.GET}, consumes = {CONTENT_TYPE_FORMED})
+    @ResponseBody
+    public CommonReturnType login(@RequestParam(name="telephone")String telephone,
+                                  @RequestParam(name="password")String password) throws BusinessException {
+        //入参校验
+        if(StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password)) {
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+
+        //用户登录服务，校验用户登录是否合法
+        UserModel userModel = userService.validateLogin(telephone, DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8)));
+
+        //将登录凭证加入到用户登录成功的session内
+        this.httpServletRequest.getSession().setAttribute("IS_LOGIN", true);
+        this.httpServletRequest.getSession().setAttribute("LOGIN_USER", userModel);
+
+        return CommonReturnType.create(null);
+    }
+
     //用户注册接口
     @RequestMapping(value = "/register", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
-    @CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
     public CommonReturnType register(@RequestParam(name="telephone")String telephone,
                                      @RequestParam(name="otpCode")String otpCode,
                                      @RequestParam(name="name")String name,
@@ -62,7 +84,7 @@ public class UserController extends BaseController {
         userModel.setGender(new Byte(String.valueOf(gender.intValue())));
         userModel.setTelephone(telephone);
         userModel.setRegisterMode("byphone");
-        userModel.setEncrptPassword(DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8)));
+        userModel.setEncryptPassword(DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8)));
 
         userService.register(userModel);
         return CommonReturnType.create(null);
@@ -71,7 +93,6 @@ public class UserController extends BaseController {
     //用户获取otp短信接口
     @RequestMapping(value="/getotp", method={RequestMethod.POST}, consumes={CONTENT_TYPE_FORMED})
     @ResponseBody
-    @CrossOrigin(originPatterns = "*", allowCredentials="true", allowedHeaders="*")
     public CommonReturnType getOtp(@RequestParam(name="telephone") String telephone) {
         //按照一定的规则生成OTP验证码
         Random random = new Random();
