@@ -1,6 +1,7 @@
 package com.hackathon.sales.dao;
 
 import com.hackathon.sales.dataobject.ItemDO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -56,4 +57,6 @@ public interface ItemDOMapper {
      * @mbg.generated Wed Apr 14 23:18:11 GMT+08:00 2021
      */
     int updateByPrimaryKey(ItemDO record);
+
+    int increaseSales(@Param("id")Integer id, @Param("amount")Integer amount);
 }

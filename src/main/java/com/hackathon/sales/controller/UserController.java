@@ -46,7 +46,7 @@ public class UserController extends BaseController {
     }
 
     //用户登录接口
-    @RequestMapping(value = "/login", method = {RequestMethod.GET}, consumes = {CONTENT_TYPE_FORMED})
+    @RequestMapping(value = "/login", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType login(@RequestParam(name="telephone")String telephone,
                                   @RequestParam(name="password")String password) throws BusinessException {

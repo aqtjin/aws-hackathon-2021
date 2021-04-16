@@ -7,7 +7,9 @@ import com.hackathon.sales.dataobject.ItemStockDO;
 import com.hackathon.sales.error.BusinessException;
 import com.hackathon.sales.error.EmBusinessError;
 import com.hackathon.sales.service.ItemService;
+import com.hackathon.sales.service.PromoService;
 import com.hackathon.sales.service.model.ItemModel;
+import com.hackathon.sales.service.model.PromoModel;
 import com.hackathon.sales.validator.ValidationResult;
 import com.hackathon.sales.validator.ValidatorImpl;
 import org.springframework.beans.BeanUtils;
@@ -28,11 +30,14 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemStockDOMapper itemStockDOMapper;
 
+    private final PromoService promoService;
+
     @Autowired
-    public ItemServiceImpl(ValidatorImpl validator, ItemDOMapper itemDOMapper, ItemStockDOMapper itemStockDOMapper) {
+    public ItemServiceImpl(ValidatorImpl validator, ItemDOMapper itemDOMapper, ItemStockDOMapper itemStockDOMapper, PromoService promoService) {
         this.validator = validator;
         this.itemDOMapper = itemDOMapper;
         this.itemStockDOMapper = itemStockDOMapper;
+        this.promoService = promoService;
     }
 
     private ItemDO convertItemDOFromItemModel(ItemModel itemModel) {
@@ -98,7 +103,26 @@ public class ItemServiceImpl implements ItemService {
 
         //将dataObject->model
         ItemModel itemModel = convertModelFromDataObject(itemDO, itemStockDO);
+
+        //获取活动商品信息
+        PromoModel promoModel = promoService.getPromoByItemId(itemModel.getId());
+        if (promoModel != null && promoModel.getStatus() != 3) {
+            itemModel.setPromoModel(promoModel);
+        }
         return itemModel;
+    }
+
+    @Override
+    @Transactional
+    public boolean decreaseStock(Integer itemId, Integer amount) throws BusinessException {
+        int affectedRow = itemStockDOMapper.decreaseStock(itemId, amount);
+        //affectedRow > 0, 则更新库存成功
+        return affectedRow > 0;
+    }
+
+    @Override
+    public void increaseSales(Integer itemId, Integer amount) throws BusinessException {
+        itemDOMapper.increaseSales(itemId, amount);
     }
 
     private ItemModel convertModelFromDataObject(ItemDO itemDO, ItemStockDO itemStockDO) {
