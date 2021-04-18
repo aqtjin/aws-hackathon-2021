@@ -9,3 +9,12 @@ spring:
     url: jdbc:mysql://miaosha.ctqjuwexc9tq.us-east-1.rds.amazonaws.com:3306/miaosha
     username: root
     password: rootroot
+
+  redis:
+    host: 52.90.14.161
+    port: 6379
+    database: 10
+    jedis:
+      pool:
+        max-active: 50
+        min-idle: 20
