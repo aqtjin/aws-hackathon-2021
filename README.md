@@ -6,7 +6,7 @@
  - Password: 111
 
 ## 项目背景
- - 为了让更多人了解并培养使用亚马逊电子书的习惯，我们设计并实现了一个模拟亚马逊的电子书促销系统。
+为了让更多人了解并培养使用亚马逊电子书的习惯，我们设计并实现了一个模拟亚马逊的电子书促销系统。
  - 前提假设：
     1. 假定所依赖的其他系统完好，使用模拟数据，比如库存系统。所模拟的数据库包括user_info, user password, items_info, items_stock, order_info, promo_info, sequence_info。
     2. 用户信息和密码表分开用以保护用户信息安全，性别输入为0/1的形式，商品信息和库存分开用来保护商品信息安全，sequence_info流水号用于解决事务createorder下单回滚的情况。
@@ -34,9 +34,9 @@
 ### 数据库部署
  - 使用**AWS RDS**工具直接方便部署MySQL数据库。图片存放在**AWS S3**中，图片链接存放在RDS的商品信息表中。
 ### 水平扩展
- - **Nginx部署前端静态资源。**用户通过nginx/html/resources访问前端静态页面。而Ajax请求则会通过Nginx反向代理到三台不同的应用服务器。
+ - **Nginx部署前端静态资源**。用户通过nginx/html/resources访问前端静态页面。而Ajax请求则会通过Nginx反向代理到三台不同的应用服务器。
  - **三台EC2部署后端项目打成的jar包**。使用./deploy.sh &即可在后台启动，使用tail -f nohup.out即可查看项目启动、运行的信息。
- - **基于Token实现分布式会话。**用UUID生成登录凭证token，然后将生成的token作为KEY，UserModel作为VALUE存入到Redis服务器。
+ - **基于Token实现分布式会话**。用UUID生成登录凭证token，然后将生成的token作为KEY，UserModel作为VALUE存入到Redis服务器。
 ### 三级缓存
 #### 一级缓存：
 OpenResty对Nginx进行了扩展，集成了lua开发环境。使用OpenResty的Shared dict，把压力转移到了Nginx服务器，后面两个Tomcat服务器压力减小。同时减少了与后面两个Tomcat服务器、Redis服务器和数据库服务器的网络I/O，当网络I/O成为瓶颈时，Shared dict提供了优化的方法。
