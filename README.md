@@ -17,7 +17,16 @@
     7. 秒杀系统的主页无需登录即可浏览折扣书籍和全部在售书籍，当点击下单时若用户未登陆则需要注册/登陆后下单。
 
 ## 项目架构
+<p><img src="https://lh4.googleusercontent.com/DMGgOsoPa7qcSVXJYCqrBJUrgCZip8zrwLaYHvxAxJfXoL8UE0fZ4Df-1dD87_q7H0qZYGGWuZ7dg6vjh6zolorcuZ26Ydxg-e49ZhPraHnoB4OjzI-rneZISySlmRE1wf9udPrU" height='500px'/></p>
+
 <p><img src="https://lh6.googleusercontent.com/JKUjlibeMeKDInI-oV0bqY54_UVshWOdfoD9T0hgWKD2K5gcfDCEt-oyDoJXSfS8c3zswgSNpWJsBW9QeQGQAX6pNXAzyh42Jn0T01KJHrtFvKEg8TStSK8fDsgI6n9n6XZpLF_a" height='350px'/></p>
+
+### 数据模型
+<p><img src="https://lh4.googleusercontent.com/zcax9S87bG2p3XPIXJOBWdD9F8mKAw7OK5vtHCeUxod6KNtVqi3pUBLKJIbSJGbG4W7WKYehM6IpHyJYIxlbqCjH7Law06m5z72macjRMOiDZhPwh9WWOU4fvzNMbIlgI1VdBIB253c" height='500px'/></p>
+
+### DAO/Service/Controller模型
+<p><img src="https://lh4.googleusercontent.com/ENG2BFvfJ1X7WAB_Ohfm4Gxq3G21u9LiHEUiS1k4A4_JBb127HDqv4V4hrgXZGkmICtCqRDXl2MwlAlN_3VbOHieMr-4YFc0fJwL8QcknXAPUnpt8tWCYCCYvdTx4amUdmubBFM9Yz4" height='500px'/></p>
+
 
 ## 项目细节
  - 使用配置mybatis自动生成器来生成文件，在mybatis-generator.xml配置文件中在对应生成表类名配置中加入
